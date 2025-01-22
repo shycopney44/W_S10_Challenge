@@ -14,7 +14,7 @@
 
 ## Introduction
 
-Welcome to Sprint 10 Challenge! In this project, you will demonstrate your ability performing advanced state management in React.
+Welcome to Sprint 10 Challenge! In this project, you will demonstrate youttr ability performing advanced state management in React.
 
 It's up to you whether to track the totality of app state using Redux, or go instead with a combination of different approaches.
 
