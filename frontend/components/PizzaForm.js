@@ -1,7 +1,5 @@
-import React, { useReducer, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useReducer } from 'react';
 import { useAddOrderMutation } from '../state/pizzaApi';
-import { addPizzaOrder } from '../state/pizzaSlice';
 
 const initialFormState = {
   fullName: '',
@@ -29,45 +27,38 @@ const formReducer = (state, action) => {
 
 export default function PizzaForm() {
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
-  const dispatchRedux = useDispatch();
   const [addOrder, { isLoading, error }] = useAddOrderMutation();
-  const [validationError, setValidationError] = useState('');
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    dispatch({
-      type: 'UPDATE_FIELD',
-      payload: { name, value: type === 'checkbox' ? checked : value },
-    });
+    let { name, value, type, checked } = e.target;
+    let valueToUse = type === 'checkbox' ? checked : value;
+    dispatch({type: "UPDATE_FIELD", payload: { name, value: valueToUse }});
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const { fullName, size, ...toppings } = formState;
-    const validToppings = Object.keys(toppings).filter(key => toppings[key]);
-    if (!fullName || fullName.length < 3 || fullName.length > 20) {
-      setValidationError('sizemust be one of the following values: S, M, L');
-      return;
-    }
-    if (!['S', 'M', 'L'].includes(size)) {
-      setValidationError('Order failed: size must be one of the following values: S, M, L');
-      return;
-    }
+    const toppingsArray = [];
+    for (const key in toppings) {
+      if (toppings[key]) {
+        toppingsArray.push(key);
+      }}
+    let requestBody = {
+      fullName,
+      size,
+      toppings,
+    };
     try {
-      await addOrder({ fullName, size, toppings: validToppings }).unwrap();
-      dispatchRedux(addPizzaOrder({ fullName, size, toppings: validToppings }));
+      addOrder(requestBody);
       dispatch({ type: 'RESET_FORM' });
-      setValidationError('');
-    } catch (err) {
-      console.error('Failed to submit order:', err);
-    }
-  };
-
+    } catch (error) {
+      console.log(error);
+  }
+  }
   return (
     <form onSubmit={handleSubmit}>
       <h2>Pizza Form</h2>
       {isLoading && <div className='pending'>Order in progress...</div>}
-      {validationError && <div className="failure">Order failed: {validationError}</div>}
       {error && <div className='failure'>Order failed: {error.message}</div>}
 
       <div className="input-group">
@@ -122,4 +113,4 @@ export default function PizzaForm() {
       <input data-testid="submit" type="submit" />
     </form>
   );
-}
+  }
