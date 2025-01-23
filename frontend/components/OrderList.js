@@ -5,9 +5,8 @@ import { useGetPizzasQuery } from '../state/pizzaApi';
 
 export default function OrderList() {
   const dispatch = useDispatch();
-  const sizeFilter = useSelector(state => state.sizeFilter.size);
+  const sizeFilter = useSelector(state => state.sizeFilter);
   const orders = useGetPizzasQuery().data || [];
-
 
   const handleFilterClick = (size) => {
     dispatch(setSizeFilter(size));
@@ -21,19 +20,18 @@ export default function OrderList() {
     <div id="orderList">
       <h2>Pizza Orders</h2>
       <>
-          <ol>
-            {
-              filteredOrders.map((order, index) => (
-                <li key={index}>
-                  <div>
-
-                    {`${order.customer} ordered a size ${order.size} with ${order.toppings.length} topping${order.toppings.length == 1 ? '' : 's'}`}
-                  </div>
-                </li>
-              ))
-            }
-          </ol>
-        </>
+        <ol>
+          {
+            filteredOrders.map((order, index) => (
+              <li key={index}>
+                <div>
+                  {`${order.customer} ordered a size ${order.size} with ${order.toppings?.length > 0 ? `${order.toppings.length} topping${order.toppings.length === 1 ? '' : 's'}` : 'no toppings'}`}
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </>
       <div id="sizeFilters">
         Filter by size:
         {

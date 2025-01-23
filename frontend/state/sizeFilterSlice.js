@@ -4,7 +4,7 @@ const sizeFilterSlice = createSlice({
   name: 'sizeFilter',
   initialState: 'All', // Default value
   reducers: {
-    setSizeFilter: (state, action) => state.size = action.payload
+    setSizeFilter: (state, action) => action.payload,
   }
 });
 
